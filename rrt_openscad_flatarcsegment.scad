@@ -6,14 +6,13 @@ $fn=50;
  * cuts off the sides at a particular width if widthLimit is > 0
  * cuts off the negative-x side if rightHalf==true
  */
-module flatArcSegment(arcHeight, arcRadius, widthLimit, rightHalf) {
+module flatArcSegment(arcHeight, arcRadius, widthLimit, rightHalf, fnOveride=100) {
     translate([0,-arcRadius+arcHeight]) // move flat edge back to origin
         difference() {
-            circle(r=arcRadius, $fn=100);
+            circle(r=arcRadius, $fn=fnOveride);
             // cut off bottom/arc
             translate([-arcRadius-overlap,
-                    -arcRadius-overlap-arcHeight,
-                    -overlap])
+                    -arcRadius-overlap-arcHeight])
                 square([arcRadius*2+overlap*2,
                     arcRadius*2+overlap*2]);
             if (widthLimit > 0) {
@@ -25,7 +24,7 @@ module flatArcSegment(arcHeight, arcRadius, widthLimit, rightHalf) {
                         arcRadius*2+overlap*2]);
                 // left end cutoff
                 translate([-arcRadius-overlap-widthLimit/2,
-                    -arcRadius-overlap,-overlap])
+                    -arcRadius-overlap])
                     square([arcRadius+overlap,
                         arcRadius*2+overlap*2]);
             }

@@ -3,6 +3,7 @@
 /*
  * Creates a cube using cylinders at the corners
  * Resulting cube is positioned in +x/+y/+z just like a normal cube.
+ * hullCubeFromCylinderCorners([20,30,10], 5, fn=50);
  */
 module hullCubeFromCylinderCorners(cubeDimensions, cornerDia, fn=20) {
     cubeX=cubeDimensions[0];
@@ -21,6 +22,28 @@ module hullCubeFromCylinderCorners(cubeDimensions, cornerDia, fn=20) {
         // +y
         translate([cornerDia/2,cubeY-cornerDia/2,0])
             cylinder(d=cornerDia, h=cubeZ, $fn=fn);
+    }
+}
+
+/*
+ * Option for constructions that need to linear-extrude a 2D shape
+ */
+module hullSquareFromCircleCorners(squareDimensions, cornerDia, fn=20) {
+    squareX=squareDimensions[0];
+    squareY=squareDimensions[1];
+    hull() {
+        // origin
+        translate([cornerDia/2,cornerDia/2])
+            circle(d=cornerDia, $fn=fn);
+        // +x
+        translate([squareX-cornerDia/2,cornerDia/2,0])
+            circle(d=cornerDia, $fn=fn);
+        // +x, +y    
+        translate([squareX-cornerDia/2,squareY-cornerDia/2,0])
+            circle(d=cornerDia, $fn=fn);
+        // +y
+        translate([cornerDia/2,squareY-cornerDia/2,0])
+            circle(d=cornerDia, $fn=fn);
     }
 }
 
@@ -65,6 +88,17 @@ module hullCubeFromSphereCorners(cubeDimensions, cornerDia, fn=20) {
 
         }
     }
+}
+
+module hullCubeSphereTopCylBottom(cubeDimensions, cornerDia, fn=20) {
+    hull() {
+        // Thin bottom layer
+        hullCubeFromCylinderCorners([cubeDimensions[0],cubeDimensions[1],overlap], cornerDia, fn);
+        // top sphere-corner hull
+        translate([0,0,cubeDimensions[2]-cornerDia])
+            hullCubeFromSphereCorners([cubeDimensions[0],cubeDimensions[1],cornerDia], cornerDia, fn);
+    }
+
 }
 
 module rotateLowFacetCount(fn) {
